@@ -1,0 +1,47 @@
+services:
+  mc:
+    build:
+      context: ./micro_cursos
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://bdsisdb2025:3306/sisbd2025
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123
+    depends_on:
+      - bdsisdb2025
+    networks:
+      - mysis
+
+  ma:
+    build:
+      context: ./micro.asignaturas
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://bdsisdb2025:3306/sisbd2025
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123
+    depends_on:
+      - bdsisdb2025
+    networks:
+      - mysis
+
+  bdsisdb2025:
+    image: mysql:8
+    container_name: bdsisdb2025
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: sisbd2025
+    volumes:
+      - ./db_data:/var/lib/mysql
+    networks:
+      - mysis
+
+networks:
+  mysis:
+    driver: bridge
